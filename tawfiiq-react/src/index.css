@@ -1,0 +1,165 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "@fontsource-variable/inter";
+@import "@fontsource-variable/plus-jakarta-sans";
+
+@custom-variant dark (&:is(.dark *));
+
+/* Tawfiiq brand tokens → Tailwind utilities (bg-navy, text-green, bg-yellow …) */
+@theme inline {
+  --font-sans: "Inter Variable", system-ui, sans-serif;
+  --font-heading: "Plus Jakarta Sans Variable", system-ui, sans-serif;
+
+  --color-navy: #0b2a66;
+  --color-navy-2: #173f91;
+  --color-navy-3: #1d4aa3;
+  --color-green: #0f7b3e;
+  --color-green-soft: #e6f4ea;
+  --color-yellow: #ffc72c;
+  --color-ink: #0b2a66;
+  --color-body: #3d4555;
+  --color-line: #e7ebf2;
+  --color-field: #7c8598;   /* form field borders, 3:1+ */
+  --color-ph: #edf2f9;      /* photo placeholders */
+  --color-soft: #f4f7fb;
+  --color-whatsapp: #157f3d;
+
+  --shadow-card: 0 1px 2px rgb(11 42 102 / .06), 0 4px 14px rgb(11 42 102 / .06);
+  --shadow-lift: 0 16px 36px rgb(11 42 102 / .12);
+
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+/* shadcn semantic tokens, set to the brand */
+:root {
+  --background: #ffffff;
+  --foreground: #3d4555;
+  --card: #ffffff;
+  --card-foreground: #3d4555;
+  --popover: #ffffff;
+  --popover-foreground: #1a2235;
+  --primary: #0b2a66;
+  --primary-foreground: #ffffff;
+  --secondary: #f4f7fb;
+  --secondary-foreground: #0b2a66;
+  --muted: #f4f7fb;
+  --muted-foreground: #5a6274;   /* 4.5:1+ on white and on placeholders */
+  --accent: #e6f4ea;
+  --accent-foreground: #0f7b3e;
+  --destructive: #b42318;
+  --border: #e7ebf2;
+  --input: #7c8598;
+  --ring: #0b2a66;
+  --radius: 0.875rem;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    @apply font-sans;
+    scroll-behavior: smooth;
+    scroll-padding-top: 88px; /* keep anchored/focused content clear of the sticky header */
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    line-height: 1.6;
+  }
+  h1, h2, h3, h4 {
+    @apply font-heading text-ink;
+    letter-spacing: -0.025em;
+    line-height: 1.12;
+  }
+  button:not(:disabled), [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+  /* Visible keyboard focus everywhere; dark sections switch the colour via --focus */
+  :focus-visible {
+    outline: 3px solid var(--focus, var(--color-navy));
+    outline-offset: 3px;
+  }
+  .on-dark { --focus: var(--color-yellow); }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+  }
+}
+
+@layer utilities {
+  .dots {
+    background-image: radial-gradient(rgb(255 255 255 / .07) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+  .no-scrollbar { scrollbar-width: none; }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+}
+
+/* ---------- Spotlight glow (components/ui/spotlight-card.tsx) ----------
+   --x/--y/--xp come from <GlowGroup>. Tweak the look with the --glow-* values. */
+@media (hover: hover) and (pointer: fine) {
+  .glow-group {
+    --glow-base: 145;   /* hue at the left of the screen (brand green) */
+    --glow-spread: 85;  /* hue shift across the screen (→ brand blue) */
+    --glow-size: 240px;
+    --glow-border: 2px;
+  }
+  .glow-card {
+    --hue: calc(var(--glow-base) + var(--xp, 0) * var(--glow-spread));
+    position: relative;
+    border-width: var(--glow-border);
+    background-color: #fff;
+    background-image: radial-gradient(var(--glow-size) var(--glow-size) at calc(var(--x, -9999) * 1px) calc(var(--y, -9999) * 1px),
+      hsl(var(--hue) 85% 45% / .07), transparent);
+    background-attachment: fixed;
+  }
+  .glow-card::before, .glow-card::after {
+    content: "";
+    position: absolute;
+    pointer-events: none;
+    border-radius: inherit;
+    background-attachment: fixed;
+    -webkit-mask: linear-gradient(#000 0 0) padding-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) padding-box, linear-gradient(#000 0 0);
+    mask-composite: exclude;
+  }
+  .glow-card::before {
+    inset: calc(var(--glow-border) * -1);
+    border: var(--glow-border) solid transparent;
+    background-image: radial-gradient(calc(var(--glow-size) * .75) calc(var(--glow-size) * .75) at calc(var(--x, -9999) * 1px) calc(var(--y, -9999) * 1px),
+      hsl(var(--hue) 90% 40% / 1), transparent 100%);
+  }
+  .glow-card::after {
+    inset: -12px;
+    border: 12px solid transparent;
+    border-radius: 30px;
+    background-image: radial-gradient(calc(var(--glow-size) * .6) calc(var(--glow-size) * .6) at calc(var(--x, -9999) * 1px) calc(var(--y, -9999) * 1px),
+      hsl(var(--hue) 90% 45% / .35), transparent 100%);
+    filter: blur(10px);
+  }
+}
